@@ -10,10 +10,12 @@ export const TaskProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [timeLeft, setTimeLeft] = useState({});
 
+  // Save tasks to localStorage when they change
   useEffect(() => {
     saveTasks(tasks);
   }, [tasks]);
 
+  // Check for tasks that need notifications
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -24,9 +26,11 @@ export const TaskProvider = ({ children }) => {
           const estimatedDuration = (task.estimatedHours * 60 + task.estimatedMinutes) * 60 * 1000;
           const endTime = new Date(startTime.getTime() + estimatedDuration);
           
+          // Calculate time left
           const diff = endTime - now;
           
           if (diff > 0) {
+            // Update time left for display
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -36,6 +40,7 @@ export const TaskProvider = ({ children }) => {
               [task.id]: { hours, minutes, seconds }
             }));
           } else if (diff <= 0 && !notifications.some(n => n.taskId === task.id)) {
+            // Add notification if time is up and notification doesn't exist yet
             const newNotification = {
               id: Date.now(),
               taskId: task.id,
@@ -46,6 +51,7 @@ export const TaskProvider = ({ children }) => {
             
             setNotifications(prev => [...prev, newNotification]);
             
+            // Show browser notification if supported
             if ('Notification' in window && Notification.permission === 'granted') {
               new Notification('Task Time Alert', {
                 body: `Time's up for your task: ${task.title}`,
@@ -60,6 +66,7 @@ export const TaskProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [tasks, notifications]);
 
+  // Request notification permission
   useEffect(() => {
     if ('Notification' in window && Notification.permission !== 'denied') {
       Notification.requestPermission();

@@ -4,66 +4,93 @@ import { TaskContext } from '../contexts/TaskContext';
 
 export const useTaskManager = () => {
   const { tasks, setTasks } = useContext(TaskContext);
-  const [newTask, setNewTask] = useState({ title: '', estimate: '' });
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    estimatedHours: 1,
+    estimatedMinutes: 0,
+    status: 'pending',
+    createdAt: null,
+    startedAt: null,
+    completedAt: null,
+    jobId: '',
+    executionLink: '',
+    completionNotes: ''
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewTask((prev) => ({ ...prev, [name]: value }));
+    setNewTask(prev => ({ ...prev, [name]: value }));
   };
 
   const createTask = () => {
-    if (!newTask.title.trim() || !newTask.estimate.trim()) return;
-
+    if (!newTask.title.trim()) return;
+    
     const task = {
-      id: Date.now(),
-      title: newTask.title.trim(),
-      estimate: newTask.estimate.trim(),
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-      details: null,
+      ...newTask,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString()
     };
-
-    setTasks((prev) => [...prev, task]);
-    setNewTask({ title: '', estimate: '' });
+    
+    setTasks(prev => [...prev, task]);
+    setNewTask({
+      title: '',
+      description: '',
+      estimatedHours: 1,
+      estimatedMinutes: 0,
+      status: 'pending',
+      createdAt: null,
+      startedAt: null,
+      completedAt: null,
+      jobId: '',
+      executionLink: '',
+      completionNotes: ''
+    });
   };
 
-  const startTask = (id) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, status: 'in-progress' } : task))
-    );
+  const startTask = (taskId) => {
+    setTasks(prev => prev.map(task => 
+      task.id === taskId 
+        ? { ...task, status: 'in-progress', startedAt: new Date().toISOString() } 
+        : task
+    ));
   };
 
-  const completeTask = (id) => {
-    setEditingTaskId(id); // ✅ FIXED: now properly declared and used
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, status: 'completed', completedAt: new Date().toISOString() } : task
-      )
-    );
+  const completeTask = (taskId) => {
+    setEditingTaskId(taskId);
   };
 
-  const saveCompletion = (id, details) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, details } : task))
-    );
+  const saveCompletion = (taskId) => {
+    setTasks(prev => prev.map(task => 
+      task.id === taskId 
+        ? { 
+            ...task, 
+            status: 'completed', 
+            completedAt: new Date().toISOString() 
+          } 
+        : task
+    ));
     setEditingTaskId(null);
   };
 
-  const deleteTask = (id) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+  const deleteTask = (taskId) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
-  const editTask = (id) => {
-    setEditingTaskId(id);
+  const editTask = (taskId) => {
+    const taskToEdit = tasks.find(task => task.id === taskId);
+    if (taskToEdit) {
+      setEditingTaskId(taskId);
+    }
   };
 
-  const updateTask = (id, updatedTask) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, ...updatedTask } : task))
-    );
-    setEditingTaskId(null);
+  const updateTask = (taskId, updatedFields) => {
+    setTasks(prev => prev.map(task => 
+      task.id === taskId 
+        ? { ...task, ...updatedFields } 
+        : task
+    ));
   };
 
   return {
@@ -78,6 +105,6 @@ export const useTaskManager = () => {
     deleteTask,
     editTask,
     updateTask,
-    setEditingTaskId, // ✅ MUST be included in return
+    setEditingTaskId
   };
 };
