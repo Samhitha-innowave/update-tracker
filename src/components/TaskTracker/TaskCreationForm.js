@@ -8,10 +8,10 @@ const TaskCreationForm = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-lg font-medium mb-4 flex items-center">
+      {/* <h2 className="text-lg font-medium mb-4 flex items-center">
         <Plus className="w-5 h-5 mr-2 text-blue-500" />
         Create New Task
-      </h2>
+      </h2> */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
