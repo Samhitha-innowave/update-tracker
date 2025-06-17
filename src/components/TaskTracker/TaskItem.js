@@ -1,13 +1,11 @@
+// ✅ Fixed TaskItem.js
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
-import { useTaskManager } from "../../hooks/useTaskManager"; // ✅ Added
 
-export default function TaskItem({ task, updateTask, saveCompletion, editingTaskId, setEditingTaskId }) {
+export default function TaskItem({ task, updateTask, saveCompletion, completeTask, editingTaskId, setEditingTaskId }) {
   const [entryType, setEntryType] = useState("note");
   const [entryValue, setEntryValue] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
-
-  const { completeTask } = useTaskManager(); // ✅ Now you have access to completeTask
 
   const renderDynamicInput = () => {
     switch (entryType) {
@@ -19,14 +17,14 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
               placeholder="Link Title"
               value={linkTitle}
               onChange={(e) => setLinkTitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-md"
             />
             <input
               type="text"
               placeholder="Paste Link"
               value={entryValue}
               onChange={(e) => setEntryValue(e.target.value)}
-              className="w-full px-3 py-2 border rounded mt-2"
+              className="w-full px-3 py-2 border rounded-md mt-2"
             />
           </>
         );
@@ -37,7 +35,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
             placeholder="Enter Job ID"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded-md"
           />
         );
       case "code":
@@ -46,7 +44,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
             placeholder="Paste Code"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 font-mono border rounded bg-gray-100"
+            className="w-full px-3 py-2 font-mono border rounded-md bg-gray-100"
             rows={4}
           />
         );
@@ -57,7 +55,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
             placeholder="Write a note"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
+            className="w-full px-3 py-2 border rounded-md"
             rows={2}
           />
         );
@@ -65,36 +63,36 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
   };
 
   return (
-    <div className="bg-white shadow rounded p-4 mb-4">
-      <h2 className="text-lg font-semibold mb-2">{task.title}</h2>
+    <div className="bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-2xl p-6 transition hover:shadow-2xl">
+      <h2 className="text-xl font-medium text-gray-800 mb-3">{task.title}</h2>
 
-      {task.completed ? (
-        <div className="space-y-2">
+      {task.status === 'completed' ? (
+        <div className="space-y-3 text-sm text-gray-700">
           {task.jobId && (
             <div>
-              <span className="text-xs text-gray-500">Job ID:</span>
-              <p className="text-sm">{task.jobId}</p>
+              <span className="font-semibold text-xs text-gray-500">Job ID:</span>
+              <p>{task.jobId}</p>
             </div>
           )}
 
           {task.executionLink && (
             <div>
-              <span className="text-xs text-gray-500">Link:</span>
+              <span className="font-semibold text-xs text-gray-500">Link:</span>
               <a
                 href={task.executionLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
               >
-                {task.linkTitle || "Open Link"} <ExternalLink className="w-3 h-3 ml-1" />
+                {task.linkTitle || "Open Link"} <ExternalLink className="w-3 h-3" />
               </a>
             </div>
           )}
 
           {task.codeSnippet && (
             <div>
-              <span className="text-xs text-gray-500">Code:</span>
-              <pre className="text-sm bg-gray-100 p-2 rounded whitespace-pre-wrap overflow-auto">
+              <span className="font-semibold text-xs text-gray-500">Code:</span>
+              <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap overflow-auto text-xs">
                 {task.codeSnippet}
               </pre>
             </div>
@@ -102,13 +100,13 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
 
           {task.completionNotes && (
             <div>
-              <span className="text-xs text-gray-500">Note:</span>
-              <p className="text-sm">{task.completionNotes}</p>
+              <span className="font-semibold text-xs text-gray-500">Note:</span>
+              <p>{task.completionNotes}</p>
             </div>
           )}
         </div>
       ) : editingTaskId === task.id ? (
-        <div className="mt-3 space-y-3 w-full">
+        <div className="mt-4 space-y-3">
           <select
             value={entryType}
             onChange={(e) => {
@@ -116,7 +114,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
               setEntryValue("");
               setLinkTitle("");
             }}
-            className="w-full px-3 py-2 border rounded bg-white"
+            className="w-full px-3 py-2 border rounded-md bg-white"
           >
             <option value="note">Note</option>
             <option value="jobId">Job ID</option>
@@ -126,7 +124,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
 
           {renderDynamicInput()}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2">
             <button
               onClick={() => {
                 const payload = {};
@@ -147,13 +145,13 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
                 setEntryValue("");
                 setLinkTitle("");
               }}
-              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+              className="px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
             >
-              Save Completion
+              Save
             </button>
             <button
               onClick={() => setEditingTaskId(null)}
-              className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+              className="px-4 py-1 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm"
             >
               Cancel
             </button>
@@ -162,9 +160,9 @@ export default function TaskItem({ task, updateTask, saveCompletion, editingTask
       ) : (
         <button
           onClick={() => completeTask(task.id)}
-          className="mt-2 text-sm text-blue-600 hover:underline"
+          className="mt-3 text-sm text-blue-600 hover:underline"
         >
-          Complete Task
+          Mark as Completed
         </button>
       )}
     </div>

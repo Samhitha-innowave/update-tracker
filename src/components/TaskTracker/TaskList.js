@@ -1,13 +1,19 @@
-// src/components/TaskTracker/TaskList.js
+// ✅ Updated TaskList.js
 import React, { useContext } from 'react';
 import { TaskContext } from '../../contexts/TaskContext';
 import TaskItem from './TaskItem';
-import TaskEditForm from './TaskEditForm';
 import { useTaskManager } from '../../hooks/useTaskManager';
 
 const TaskList = () => {
   const { tasks, filter } = useContext(TaskContext);
-  const { editingTaskId } = useTaskManager();
+
+  const {
+    editingTaskId,
+    updateTask,
+    saveCompletion,
+    completeTask,
+    setEditingTaskId
+  } = useTaskManager();
 
   const filteredTasks = tasks.filter(task => {
     if (filter === 'all') return true;
@@ -16,21 +22,27 @@ const TaskList = () => {
 
   if (filteredTasks.length === 0) {
     return (
-      <div className="text-center p-6 bg-white rounded-lg shadow">
-        <p className="text-gray-500">No tasks to display. Create a new task to get started!</p>
+      <div className="bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-2xl p-6 transition hover:shadow-2xl">
+        <p className="text-gray-500 text-lg">📭 No tasks to display. Add one to get started!</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 mt-6">
       {filteredTasks.map(task => (
-        <div key={task.id} className="bg-white rounded-lg shadow-md p-4">
-          {editingTaskId === task.id ? (
-            <TaskEditForm task={task} />
-          ) : (
-            <TaskItem task={task} />
-          )}
+        <div
+          key={task.id}
+          className="bg-white rounded-xl shadow-md p-4 transition-transform duration-200 hover:scale-[1.01]"
+        >
+          <TaskItem
+            task={task}
+            updateTask={updateTask}
+            saveCompletion={saveCompletion}
+            completeTask={completeTask}
+            editingTaskId={editingTaskId}
+            setEditingTaskId={setEditingTaskId}
+          />
         </div>
       ))}
     </div>

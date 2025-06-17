@@ -1,4 +1,4 @@
-// src/hooks/useTaskManager.js
+// ✅ useTaskManager.js (fully working version)
 import { useContext, useState } from 'react';
 import { TaskContext } from '../contexts/TaskContext';
 
@@ -21,19 +21,19 @@ export const useTaskManager = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewTask(prev => ({ ...prev, [name]: value }));
+    setNewTask((prev) => ({ ...prev, [name]: value }));
   };
 
   const createTask = () => {
     if (!newTask.title.trim()) return;
-    
+
     const task = {
       ...newTask,
       id: Date.now().toString(),
       createdAt: new Date().toISOString()
     };
-    
-    setTasks(prev => [...prev, task]);
+
+    setTasks((prev) => [...prev, task]);
     setNewTask({
       title: '',
       description: '',
@@ -50,47 +50,54 @@ export const useTaskManager = () => {
   };
 
   const startTask = (taskId) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId 
-        ? { ...task, status: 'in-progress', startedAt: new Date().toISOString() } 
-        : task
-    ));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? { ...task, status: 'in-progress', startedAt: new Date().toISOString() }
+          : task
+      )
+    );
   };
 
   const completeTask = (taskId) => {
+    // Set edit mode to true for the task to allow input before final save
     setEditingTaskId(taskId);
   };
 
   const saveCompletion = (taskId) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId 
-        ? { 
-            ...task, 
-            status: 'completed', 
-            completedAt: new Date().toISOString() 
-          } 
-        : task
-    ));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status: 'completed',
+              completedAt: new Date().toISOString()
+            }
+          : task
+      )
+    );
     setEditingTaskId(null);
   };
 
   const deleteTask = (taskId) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
   const editTask = (taskId) => {
-    const taskToEdit = tasks.find(task => task.id === taskId);
+    const taskToEdit = tasks.find((task) => task.id === taskId);
     if (taskToEdit) {
       setEditingTaskId(taskId);
     }
   };
 
   const updateTask = (taskId, updatedFields) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId 
-        ? { ...task, ...updatedFields } 
-        : task
-    ));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? { ...task, ...updatedFields }
+          : task
+      )
+    );
   };
 
   return {
