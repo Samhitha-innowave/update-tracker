@@ -8,12 +8,6 @@ const TaskFilters = () => {
   return (
     <div className="mb-4 flex space-x-2">
       <button
-        onClick={() => setFilter('all')}
-        className={`px-3 py-1 rounded ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-      >
-        All
-      </button>
-      <button
         onClick={() => setFilter('pending')}
         className={`px-3 py-1 rounded ${filter === 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
       >

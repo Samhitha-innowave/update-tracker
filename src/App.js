@@ -9,7 +9,7 @@ import './index.css';
 function App() {
   return (
     <TaskProvider>
-      <div className="min-h-screen bg-gray-100 text-center p-10">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 text-gray-800 font-sans">
         <Router>
           <Header />
           <Routes>
