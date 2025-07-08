@@ -1,11 +1,21 @@
-// ✅ Fixed TaskItem.js
+// src/components/TaskTracker/TaskItem.js
 import { useState } from "react";
-import { ExternalLink } from "lucide-react";
+// import { ExternalLink } from "lucide-react";
 
-export default function TaskItem({ task, updateTask, saveCompletion, completeTask, editingTaskId, setEditingTaskId }) {
+export default function TaskItem({
+  task,
+  updateTask,
+  saveCompletion,
+  completeTask,
+  editingTaskId,
+  setEditingTaskId
+}) {
   const [entryType, setEntryType] = useState("note");
   const [entryValue, setEntryValue] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState(task.title);
+  const [showDetails, setShowDetails] = useState(false);
 
   const renderDynamicInput = () => {
     switch (entryType) {
@@ -62,50 +72,46 @@ export default function TaskItem({ task, updateTask, saveCompletion, completeTas
     }
   };
 
+  const saveTitle = () => {
+    updateTask(task.id, { title: titleDraft });
+    setIsEditingTitle(false);
+  };
+
+  const renderDetails = () => (
+    <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm text-gray-700 space-y-2 shadow-inner">
+      <p><strong>Status:</strong> {task.status}</p>
+      {task.description && <p><strong>Description:</strong> {task.description}</p>}
+      {task.jobId && <p><strong>Job ID:</strong> {task.jobId}</p>}
+      {task.executionLink && (
+        <p>
+          <strong>Link:</strong>{" "}
+          <a href={task.executionLink} className="text-blue-600 underline" target="_blank" rel="noreferrer">
+            {task.linkTitle || task.executionLink}
+          </a>
+        </p>
+      )}
+      {task.completionNotes && <p><strong>Note:</strong> {task.completionNotes}</p>}
+      {task.codeSnippet && (
+        <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">{task.codeSnippet}</pre>
+      )}
+    </div>
+  );
+
   return (
-    <div className="bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-2xl p-6 transition hover:shadow-2xl">
-      <h2 className="text-xl font-medium text-gray-800 mb-3">{task.title}</h2>
+    <div className="bg-white rounded-xl shadow-md p-6 transition hover:shadow-xl">
+      {isEditingTitle ? (
+        <input
+          type="text"
+          value={titleDraft}
+          onChange={(e) => setTitleDraft(e.target.value)}
+          onBlur={saveTitle}
+          className="w-full mb-2 px-2 py-1 border border-gray-300 rounded"
+        />
+      ) : (
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">{task.title}</h2>
+      )}
 
-      {task.status === 'completed' ? (
-        <div className="space-y-3 text-sm text-gray-700">
-          {task.jobId && (
-            <div>
-              <span className="font-semibold text-xs text-gray-500">Job ID:</span>
-              <p>{task.jobId}</p>
-            </div>
-          )}
-
-          {task.executionLink && (
-            <div>
-              <span className="font-semibold text-xs text-gray-500">Link:</span>
-              <a
-                href={task.executionLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
-              >
-                {task.linkTitle || "Open Link"} <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-          )}
-
-          {task.codeSnippet && (
-            <div>
-              <span className="font-semibold text-xs text-gray-500">Code:</span>
-              <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap overflow-auto text-xs">
-                {task.codeSnippet}
-              </pre>
-            </div>
-          )}
-
-          {task.completionNotes && (
-            <div>
-              <span className="font-semibold text-xs text-gray-500">Note:</span>
-              <p>{task.completionNotes}</p>
-            </div>
-          )}
-        </div>
-      ) : editingTaskId === task.id ? (
+      {editingTaskId === task.id ? (
         <div className="mt-4 space-y-3">
           <select
             value={entryType}
@@ -127,7 +133,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, completeTas
           <div className="flex justify-end gap-2 pt-2">
             <button
               onClick={() => {
-                const payload = {};
+                const payload = { status: 'completed' };
                 if (entryType === "link") {
                   payload.executionLink = entryValue;
                   payload.linkTitle = linkTitle;
@@ -140,10 +146,7 @@ export default function TaskItem({ task, updateTask, saveCompletion, completeTas
                 }
 
                 updateTask(task.id, payload);
-                saveCompletion(task.id);
                 setEditingTaskId(null);
-                setEntryValue("");
-                setLinkTitle("");
               }}
               className="px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
             >
@@ -158,13 +161,40 @@ export default function TaskItem({ task, updateTask, saveCompletion, completeTas
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => completeTask(task.id)}
-          className="mt-3 text-sm text-blue-600 hover:underline"
-        >
-          Mark as Completed
-        </button>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {task.status !== 'completed' && (
+            <>
+              <button
+                onClick={() => setEditingTaskId(task.id)}
+                className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 transition"
+              >
+                ✅ Complete
+              </button>
+              <button
+                onClick={() => updateTask(task.id, { status: 'in-progress' })}
+                className="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition"
+              >
+                🚧 In Progress
+              </button>
+            </>
+          )}
+
+          <button
+            onClick={() => setShowDetails((prev) => !prev)}
+            className="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+          >
+            {showDetails ? '🙈 Hide' : '👁️ View'}
+          </button>
+          <button
+            onClick={() => setIsEditingTitle(true)}
+            className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition"
+          >
+            ✏️ Edit Title
+          </button>
+        </div>
       )}
+
+      {showDetails && renderDetails()}
     </div>
   );
 }
