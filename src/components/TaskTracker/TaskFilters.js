@@ -2,23 +2,29 @@
 import React, { useContext } from 'react';
 import { TaskContext } from '../../contexts/TaskContext';
 
+const filters = [
+  { label: "To Do", value: "to-do" },
+  { label: "In Progress", value: "in-progress" },
+  { label: "Completed", value: "completed" },
+];
+
 const TaskFilters = () => {
   const { filter, setFilter } = useContext(TaskContext);
-  const filters = ['to-do', 'in-progress', 'completed'];
 
   return (
-    <div className="mb-4 flex justify-center gap-3">
-      {filters.map(type => (
+    <div className="flex justify-center gap-4 mt-4">
+      {filters.map(({ label, value }) => (
         <button
-          key={type}
-          onClick={() => setFilter(type)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-            filter === type
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
+          key={value}
+          onClick={() => setFilter(value)}
+          className={`px-5 py-2 rounded-full text-sm font-medium border-2 transition 
+            ${
+              filter === value
+                ? "bg-white text-gray-800 border-white shadow-lg"
+                : "bg-transparent text-white border-white/30 hover:border-white"
+            }`}
         >
-          {type.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          {label}
         </button>
       ))}
     </div>

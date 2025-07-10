@@ -1,64 +1,64 @@
-// ✅ TaskCreationForm.js (Artistic Dark Mode UI)
+// src/components/TaskTracker/TaskCreationForm.js
 import React from 'react';
 import { useTaskManager } from '../../hooks/useTaskManager';
 
 const TaskCreationForm = () => {
-  const {
-    newTask,
-    handleInputChange,
-    createTask
-  } = useTaskManager();
+  const { newTask, handleInputChange, createTask } = useTaskManager();
 
   return (
-    <div className="bg-white/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl rounded-2xl p-6 max-w-3xl mx-auto mt-4 backdrop-blur-md">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">📝 Add New Task</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2">
         <input
           type="text"
           name="title"
           value={newTask.title}
           onChange={handleInputChange}
           placeholder="Task title"
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
-
         <input
-          type="number"
-          name="estimatedHours"
-          min="0"
-          value={newTask.estimatedHours}
-          onChange={handleInputChange}
-          placeholder="Hours"
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
-        />
-
-        <input
-          type="number"
-          name="estimatedMinutes"
-          min="0"
-          value={newTask.estimatedMinutes}
-          onChange={handleInputChange}
-          placeholder="Minutes"
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
-        />
-
-        <textarea
+          type="text"
           name="description"
           value={newTask.description}
           onChange={handleInputChange}
-          placeholder="Task description (optional)"
-          className="col-span-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 resize-none"
-          rows={3}
-        ></textarea>
+          placeholder="Short description"
+          className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
       </div>
 
-      <div className="flex justify-end mt-4">
+      <div className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4">
+      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        Estimated Time
+      </label>
+      <div className="grid grid-cols-2 gap-4">
+        <input
+          type="number"
+          name="estimatedHours"
+          value={newTask.estimatedHours}
+          onChange={handleInputChange}
+          placeholder="Hours"
+          min="0"
+          className="w-full px-4 py-2 bg-white dark:bg-gray-700 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <input
+          type="number"
+          name="estimatedMinutes"
+          value={newTask.estimatedMinutes}
+          onChange={handleInputChange}
+          placeholder="Minutes"
+          min="0"
+          className="w-full px-4 py-2 bg-white dark:bg-gray-700 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
+    </div>
+
+
+      <div className="text-right">
         <button
           onClick={createTask}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition shadow-md"
+          className="inline-block bg-primary hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition shadow-md hover:shadow-lg"
         >
-          ➕ Add Task
+          + Add Task
         </button>
       </div>
     </div>

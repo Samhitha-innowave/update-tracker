@@ -1,49 +1,19 @@
 // src/hooks/useNotifications.js
-import { useContext } from 'react';
-import { TaskContext } from '../contexts/TaskContext';
+import { useCallback } from 'react';
 
 export const useNotifications = () => {
-  const { notifications, setNotifications } = useContext(TaskContext);
+  const notify = useCallback((message) => {
+    const notif = document.createElement('div');
+    notif.className =
+      'fixed top-5 right-5 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-slideIn';
+    notif.innerText = message;
 
-  const dismissNotification = (notificationId) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== notificationId));
-  };
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      notif.style.opacity = '0';
+      setTimeout(() => notif.remove(), 500);
+    }, 4000);
+  }, []);
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(notification => ({ ...notification, isRead: true })));
-  };
-
-  const clearAllNotifications = () => {
-    setNotifications([]);
-  };
-
-  const createNotification = (taskId, message) => {
-    const newNotification = {
-      id: Date.now(),
-      taskId,
-      message,
-      createdAt: new Date().toISOString(),
-      isRead: false
-    };
-    
-    setNotifications(prev => [...prev, newNotification]);
-    
-    // Show browser notification if supported
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Task Tracker', {
-        body: message,
-        icon: '/favicon.ico'
-      });
-    }
-    
-    return newNotification;
-  };
-
-  return {
-    notifications,
-    dismissNotification,
-    markAllAsRead,
-    clearAllNotifications,
-    createNotification
-  };
+  return { notify };
 };

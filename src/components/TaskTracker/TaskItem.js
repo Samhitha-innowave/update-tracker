@@ -1,6 +1,6 @@
 // src/components/TaskTracker/TaskItem.js
 import { useState } from 'react';
-// import { ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export default function TaskItem({
   task,
@@ -14,31 +14,37 @@ export default function TaskItem({
   const [entryType, setEntryType] = useState("note");
   const [entryValue, setEntryValue] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState(task.title);
   const [showDetails, setShowDetails] = useState(false);
 
-  const saveTitle = () => {
-    updateTask(task.id, { title: titleDraft });
-    setIsEditingTitle(false);
+  const renderBadge = () => {
+    const map = {
+      'to-do': 'bg-gray-300 text-gray-800',
+      'in-progress': 'bg-yellow-400 text-yellow-900',
+      'completed': 'bg-green-500 text-white',
+      'paused': 'bg-red-500 text-white'
+    };
+    return (
+      <span className={`px-3 py-1 rounded-full text-xs font-medium ${map[task.status] || 'bg-gray-500 text-white'}`}>
+        {task.status.replace('-', ' ')}
+      </span>
+    );
   };
 
   const renderDetails = () => (
-    <div className="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-md text-sm text-gray-700 dark:text-gray-300 space-y-2">
-      <p><strong>Status:</strong> {task.status}</p>
+    <div className="text-sm space-y-2 text-gray-100 mt-4">
       {task.description && <p><strong>Description:</strong> {task.description}</p>}
       {task.jobId && <p><strong>Job ID:</strong> {task.jobId}</p>}
       {task.executionLink && (
         <p>
-          <strong>Link:</strong>{" "}
-          <a href={task.executionLink} className="text-blue-600 underline" target="_blank" rel="noreferrer">
+          <strong>Link:</strong>{' '}
+          <a href={task.executionLink} className="text-blue-400 underline" target="_blank" rel="noreferrer">
             {task.linkTitle || task.executionLink}
           </a>
         </p>
       )}
       {task.completionNotes && <p><strong>Note:</strong> {task.completionNotes}</p>}
       {task.codeSnippet && (
-        <pre className="bg-gray-100 dark:bg-gray-700 p-2 rounded whitespace-pre-wrap">{task.codeSnippet}</pre>
+        <pre className="bg-gray-800 rounded p-2 overflow-x-auto whitespace-pre-wrap">{task.codeSnippet}</pre>
       )}
     </div>
   );
@@ -53,14 +59,14 @@ export default function TaskItem({
               placeholder="Link Title"
               value={linkTitle}
               onChange={(e) => setLinkTitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 bg-gray-700 rounded border border-gray-600 text-white"
             />
             <input
               type="text"
               placeholder="Paste Link"
               value={entryValue}
               onChange={(e) => setEntryValue(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white mt-2"
+              className="w-full mt-2 px-3 py-2 bg-gray-700 rounded border border-gray-600 text-white"
             />
           </>
         );
@@ -71,7 +77,7 @@ export default function TaskItem({
             placeholder="Enter Job ID"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 bg-gray-700 rounded border border-gray-600 text-white"
           />
         );
       case "code":
@@ -80,18 +86,17 @@ export default function TaskItem({
             placeholder="Paste Code"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 font-mono border rounded-md bg-gray-100 dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 font-mono bg-gray-800 rounded border border-gray-600 text-white"
             rows={4}
           />
         );
-      case "note":
       default:
         return (
           <textarea
             placeholder="Write a note"
             value={entryValue}
             onChange={(e) => setEntryValue(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 bg-gray-700 rounded border border-gray-600 text-white"
             rows={2}
           />
         );
@@ -99,21 +104,14 @@ export default function TaskItem({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 shadow-md dark:shadow-lg rounded-xl p-6 transition duration-300 text-gray-900 dark:text-white">
-      {isEditingTitle ? (
-        <input
-          type="text"
-          value={titleDraft}
-          onChange={(e) => setTitleDraft(e.target.value)}
-          onBlur={saveTitle}
-          className="w-full mb-2 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-        />
-      ) : (
-        <h2 className="text-xl font-semibold">{task.title}</h2>
-      )}
+    <div className="mb-6 rounded-2xl bg-glass border border-white/10 shadow-xl backdrop-blur-md p-6 transition hover:shadow-2xl">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-white">{task.title}</h2>
+        {renderBadge()}
+      </div>
 
       {editingTaskId === task.id ? (
-        <div className="mt-4 space-y-3">
+        <div className="space-y-4 mt-3">
           <select
             value={entryType}
             onChange={(e) => {
@@ -121,7 +119,7 @@ export default function TaskItem({
               setEntryValue("");
               setLinkTitle("");
             }}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           >
             <option value="note">Note</option>
             <option value="jobId">Job ID</option>
@@ -131,7 +129,7 @@ export default function TaskItem({
 
           {renderDynamicInput()}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-3">
             <button
               onClick={() => {
                 const payload = { status: 'completed' };
@@ -155,32 +153,32 @@ export default function TaskItem({
             </button>
             <button
               onClick={() => setEditingTaskId(null)}
-              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 text-gray-800 dark:text-white rounded-md"
+              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md"
             >
               Cancel
             </button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-wrap gap-2 mt-4">
           {task.status !== 'completed' && (
             <>
               <button
-                onClick={() => setEditingTaskId(task.id)}
-                className="px-3 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-700 text-blue-800 dark:text-white hover:bg-blue-200 transition"
+                onClick={() => completeTask(task.id)}
+                className="px-4 py-1 bg-blue-600 text-white rounded-full text-xs hover:bg-blue-700"
               >
                 ✅ Complete
               </button>
               <button
                 onClick={() => updateTask(task.id, { status: 'in-progress' })}
-                className="px-3 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-white hover:bg-yellow-200 transition"
+                className="px-4 py-1 bg-yellow-400 text-yellow-900 rounded-full text-xs hover:bg-yellow-300"
               >
                 🚧 In Progress
               </button>
               {pauseTask && (
                 <button
                   onClick={() => pauseTask(task.id)}
-                  className="px-3 py-1 text-xs rounded-full bg-red-100 dark:bg-red-700 text-red-800 dark:text-white hover:bg-red-200 transition"
+                  className="px-4 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
                 >
                   ⏸ Pause
                 </button>
@@ -189,15 +187,9 @@ export default function TaskItem({
           )}
           <button
             onClick={() => setShowDetails((prev) => !prev)}
-            className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white hover:bg-gray-300 transition"
+            className="px-4 py-1 bg-gray-600 text-white rounded-full text-xs hover:bg-gray-500"
           >
-            {showDetails ? '🙈 Hide' : '👁️ View'}
-          </button>
-          <button
-            onClick={() => setIsEditingTitle(true)}
-            className="px-3 py-1 text-xs rounded-full bg-green-100 dark:bg-green-700 text-green-800 dark:text-white hover:bg-green-200 transition"
-          >
-            ✏️ Edit
+            {showDetails ? '🙈 Hide' : '👁 View'}
           </button>
         </div>
       )}
