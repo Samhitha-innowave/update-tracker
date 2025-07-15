@@ -1,6 +1,5 @@
 // src/components/TaskTracker/TaskItem.js
 import { useState } from 'react';
-import { ExternalLink } from 'lucide-react';
 
 export default function TaskItem({
   task,

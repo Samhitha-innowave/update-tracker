@@ -14,7 +14,7 @@ const TaskCreationForm = () => {
           value={newTask.title}
           onChange={handleInputChange}
           placeholder="Task title"
-          className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-3 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <input
           type="text"
@@ -22,36 +22,35 @@ const TaskCreationForm = () => {
           value={newTask.description}
           onChange={handleInputChange}
           placeholder="Short description"
-          className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-3 bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       <div className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4">
-      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-        Estimated Time
-      </label>
-      <div className="grid grid-cols-2 gap-4">
-        <input
-          type="number"
-          name="estimatedHours"
-          value={newTask.estimatedHours}
-          onChange={handleInputChange}
-          placeholder="Hours"
-          min="0"
-          className="w-full px-4 py-2 bg-white dark:bg-gray-700 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <input
-          type="number"
-          name="estimatedMinutes"
-          value={newTask.estimatedMinutes}
-          onChange={handleInputChange}
-          placeholder="Minutes"
-          min="0"
-          className="w-full px-4 py-2 bg-white dark:bg-gray-700 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Estimated Time
+        </label>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="number"
+            name="estimatedHours"
+            value={newTask.estimatedHours}
+            onChange={handleInputChange}
+            placeholder="Hours"
+            min="0"
+           className="w-full px-4 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-white text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <input
+            type="number"
+            name="estimatedMinutes"
+            value={newTask.estimatedMinutes}
+            onChange={handleInputChange}
+            placeholder="Minutes"
+            min="0"
+            className="w-full px-4 py-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-white text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
       </div>
-    </div>
-
 
       <div className="text-right">
         <button
